@@ -6,6 +6,7 @@ import {
   LOCATIONS,
   CONTACTS,
   PARCEL_TYPES,
+  ORGANIZATION_TYPES,
 } from "@/lib/task-types"
 import {
   MapPin,
@@ -125,6 +126,14 @@ export function StepConfirmation({ data }: StepConfirmationProps) {
                           <span className="text-[9px] font-bold uppercase tracking-tighter text-muted-foreground">Contact No:</span>
                           <p className="text-xs font-semibold">{data.pickupContact.contactNo || "-"}</p>
                         </div>
+                        {data.pickupContact.organizationType && (
+                          <div className="col-span-2">
+                            <span className="text-[9px] font-bold uppercase tracking-tighter text-muted-foreground">Org Type:</span>
+                            <p className="text-xs font-semibold">
+                              {ORGANIZATION_TYPES.find(o => o.value === data.pickupContact.organizationType)?.label || data.pickupContact.organizationType}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -180,6 +189,14 @@ export function StepConfirmation({ data }: StepConfirmationProps) {
                             <span className="text-[9px] font-bold uppercase tracking-tighter text-muted-foreground">Contact No:</span>
                             <p className="text-xs font-semibold">{dropOff.contact.contactNo || "-"}</p>
                           </div>
+                          {dropOff.contact.organizationType && (
+                            <div className="col-span-2">
+                              <span className="text-[9px] font-bold uppercase tracking-tighter text-muted-foreground">Org Type:</span>
+                              <p className="text-xs font-semibold">
+                                {ORGANIZATION_TYPES.find(o => o.value === dropOff.contact.organizationType)?.label || dropOff.contact.organizationType}
+                              </p>
+                            </div>
+                          )}
                           <div>
                             <span className="text-[9px] font-bold uppercase tracking-tighter text-muted-foreground">Parcel Type:</span>
                             <p className="text-xs font-semibold">

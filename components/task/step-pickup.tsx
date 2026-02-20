@@ -25,6 +25,7 @@ export function StepPickup({ data, onChange }: StepPickupProps) {
         onChange={(contact: ContactInfo) =>
           onChange({ pickupContact: contact })
         }
+        showOrgType
       />
     </div>
   )

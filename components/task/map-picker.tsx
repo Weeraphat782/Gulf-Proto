@@ -26,6 +26,8 @@ const LeafletMapRenderer = dynamic(
 interface MapPickerProps {
   lat: number | null
   lng: number | null
+  addressName?: string
+  addressDetails?: string
   onSelect: (lat: number, lng: number, addressName: string, addressDetails: string) => void
   label?: string
 }
@@ -36,12 +38,20 @@ const DEFAULT_LNG = 100.5018
 export function MapPicker({
   lat,
   lng,
+  addressName: initialAddressName = "",
+  addressDetails: initialAddressDetails = "",
   onSelect,
   label = "Select the pick up location",
 }: MapPickerProps) {
   const [open, setOpen] = useState(false)
-  const [addressName, setAddressName] = useState("")
-  const [addressDetails, setAddressDetails] = useState("")
+  const [addressName, setAddressName] = useState(initialAddressName)
+  const [addressDetails, setAddressDetails] = useState(initialAddressDetails)
+
+  // Sync state with props when they change externally (e.g. from master data selection)
+  useEffect(() => {
+    if (initialAddressName) setAddressName(initialAddressName)
+    if (initialAddressDetails) setAddressDetails(initialAddressDetails)
+  }, [initialAddressName, initialAddressDetails])
 
   // Ref for inline preview map (using vanilla leaflet for lightweight preview)
   const previewMapRef = useRef<HTMLDivElement>(null)
@@ -70,10 +80,12 @@ export function MapPicker({
   }, [])
 
   useEffect(() => {
-    if (hasPin) {
+    // Only reverse geocode if coordinates are present AND we don't have specific initial metadata
+    // or if the coordinates changed and they differ from the initial ones.
+    if (hasPin && (!initialAddressName || !initialAddressDetails)) {
       reverseGeocode(lat, lng)
     }
-  }, [lat, lng, hasPin, reverseGeocode])
+  }, [lat, lng, hasPin, reverseGeocode, initialAddressName, initialAddressDetails])
 
   // ─── Inline Preview Map ───
   useEffect(() => {
@@ -90,13 +102,16 @@ export function MapPicker({
         previewMapInstanceRef.current.remove()
       }
 
-      // Fix icon issues
-      delete (L.Icon.Default.prototype as any)._getIconUrl
-      L.Icon.Default.mergeOptions({
-        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-        iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-      })
+      // Fix icon issues once
+      if (!(L.Icon.Default.prototype as any)._fixed) {
+        delete (L.Icon.Default.prototype as any)._getIconUrl
+        L.Icon.Default.mergeOptions({
+          iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+          iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+          shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+        })
+          ; (L.Icon.Default.prototype as any)._fixed = true
+      }
 
       const map = L.map(previewMapRef.current, {
         zoomControl: false,
@@ -113,7 +128,16 @@ export function MapPicker({
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
 
       if (hasPin) {
-        L.marker([displayLat, displayLng]).addTo(map)
+        const customIcon = L.icon({
+          iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+          iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+          shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+        });
+        L.marker([displayLat, displayLng], { icon: customIcon }).addTo(map)
       }
 
       // Polling to handle potential container resize

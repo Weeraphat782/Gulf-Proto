@@ -52,10 +52,38 @@ export const TASK_TYPES = [
 ]
 
 export const LOCATIONS = [
-  { value: "office-bkk", label: "สำนักงานใหญ่ กรุงเทพ" },
-  { value: "warehouse-sm", label: "คลังสินค้า สมุทรปราการ" },
-  { value: "branch-cm", label: "สาขาเชียงใหม่" },
-  { value: "branch-pk", label: "สาขาภูเก็ต" },
+  {
+    value: "office-bkk",
+    label: "สำนักงานใหญ่ กรุงเทพ",
+    lat: 13.7563,
+    lng: 100.5018,
+    addressName: "Bangkok Head Office",
+    addressDetails: "123 Ratchadamnoen Ave, Phra Nakhon, Bangkok 10200"
+  },
+  {
+    value: "warehouse-sm",
+    label: "คลังสินค้า สมุทรปราการ",
+    lat: 13.5991,
+    lng: 100.6057,
+    addressName: "Samut Prakan Warehouse",
+    addressDetails: "456 Sukhumvit Rd, Bang Mueang, Samut Prakan 10270"
+  },
+  {
+    value: "branch-cm",
+    label: "สาขาเชียงใหม่",
+    lat: 18.7883,
+    lng: 98.9853,
+    addressName: "Chiang Mai Branch",
+    addressDetails: "789 Nimmanahaeminda Rd, Suthep, Chiang Mai 50200"
+  },
+  {
+    value: "branch-pk",
+    label: "สาขาภูเก็ต",
+    lat: 7.8804,
+    lng: 98.3923,
+    addressName: "Phuket Branch",
+    addressDetails: "101 Phang Nga Rd, Talat Yai, Phuket 83000"
+  },
 ]
 
 export const CONTACTS = [

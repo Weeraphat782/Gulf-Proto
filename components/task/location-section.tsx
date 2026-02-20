@@ -60,9 +60,21 @@ export function LocationSection({
         {data.selectionMode === "list" ? (
           <Select
             value={data.selectedLocation}
-            onValueChange={(val) =>
-              onChange({ ...data, selectedLocation: val })
-            }
+            onValueChange={(val) => {
+              const selected = LOCATIONS.find((l) => l.value === val)
+              if (selected) {
+                onChange({
+                  ...data,
+                  selectedLocation: val,
+                  lat: selected.lat,
+                  lng: selected.lng,
+                  addressName: selected.addressName,
+                  addressDetails: selected.addressDetails,
+                })
+              } else {
+                onChange({ ...data, selectedLocation: val })
+              }
+            }}
           >
             <SelectTrigger className="w-full border-[#E5E5E5] bg-white text-foreground focus:ring-[#2E3192]">
               <SelectValue placeholder="Select Location Name" />
@@ -90,6 +102,8 @@ export function LocationSection({
         <MapPicker
           lat={data.lat}
           lng={data.lng}
+          addressName={data.addressName}
+          addressDetails={data.addressDetails}
           onSelect={(lat, lng, addressName, addressDetails) =>
             onChange({ ...data, lat, lng, addressName, addressDetails })
           }
